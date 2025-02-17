@@ -4,8 +4,8 @@ pragma solidity ^0.8.0;
 import {Script, console} from "forge-std/Script.sol";
 import {GatekeeperTwo, Attack} from "../src/GatekeeperTwo.sol";
 
-contract GatekeeperOneScript is Script {
-    GatekeeperOne public gateKeeperOne;
+contract GatekeeperTwoScript is Script {
+    GatekeeperTwo public gateKeeperTwo;
 
     address constant DEPLOYED_CONTRACT_ADDRESS = 0x7a1a98642d342ACa619AC93caD9dDa2C9c78F431;
 
@@ -14,11 +14,9 @@ contract GatekeeperOneScript is Script {
     function run() public {
         vm.startBroadcast();
         
-        gateKeeperOne = new GatekeeperOne();
+        gateKeeperTwo = new GatekeeperTwo();
         
-        Attack attacker = new Attack(gateKeeperOne);
-
-        attacker.attack();
+        Attack attacker = new Attack(gateKeeperTwo);
 
         vm.stopBroadcast();
     }
